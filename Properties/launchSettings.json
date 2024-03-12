@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PAK Compiler": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\Visual Studio\\Repos\\PAK Extractor\\to_extract\\qb_gha_decomp\""
+    }
+  }
+}

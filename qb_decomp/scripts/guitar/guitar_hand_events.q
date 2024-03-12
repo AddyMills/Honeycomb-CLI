@@ -1,0 +1,459 @@
+
+script Strum_iterator \{song_name = "test"
+		difficulty = "easy"
+		array_type = "song"
+		part = ''}
+	if NOT GotParam \{target}
+		printf \{"Strum_iterator called without target!"}
+		return
+	endif
+	get_song_prefix song = <song_name>
+	FormatText checksumname = song '%s_song_%pexpert' s = <song_prefix> p = <part> addtostringlookup
+	array_entry = 0
+	GetArraySize $<song>
+	if (<array_size> = 0)
+		return
+	endif
+	song_array_size = (<array_size> / $num_song_columns)
+	getsongtimems time_offset = <time_offset>
+	if NOT (<song_array_size> = 0)
+		begin
+		if ((<time> - <skipleadin>) < ($<song> [<array_entry>]))
+			break
+		endif
+		<array_entry> = (<array_entry> + $num_song_columns)
+		repeat <song_array_size>
+		song_array_size = (<song_array_size> - (<array_entry> / $num_song_columns))
+	endif
+	begin
+	if (<song_array_size> = 0)
+		break
+	endif
+	TimeMarkerReached_SetParams time_offset = <time_offset> array = <song> array_entry = <array_entry>
+	begin
+	if TimeMarkerReached
+		getsongtimems time_offset = <time_offset>
+		break
+	endif
+	wait \{1 gameframe}
+	repeat
+	TimeMarkerReached_ClearParams
+	note_length = ($<song> [(<array_entry> + 1)])
+	if (<note_length> > 0)
+		LaunchEvent type = strum_guitar target = <target> Data = {note_length = <note_length>}
+	endif
+	<array_entry> = (<array_entry> + $num_song_columns)
+	repeat <song_array_size>
+endscript
+
+script FretPos_iterator 
+	if NOT GotParam \{target}
+		printf \{"FretPos_iterator called without target!"}
+		return
+	endif
+	if ($disable_band = 1)
+		return
+	endif
+	get_song_prefix song = <song_name>
+	FormatText checksumname = event_array '%s_anim_notes' s = <song_prefix> addtostringlookup
+	if NOT globalexists name = <event_array> type = array
+		printf \{"FRETPOS ANIMS DISABLED: No midi events found for this song"}
+		return
+	endif
+	array_entry = 0
+	GetArraySize $<event_array>
+	getsongtimems time_offset = <time_offset>
+	if NOT (<array_size> = 0)
+		begin
+		if ((<time> - <skipleadin>) < $<event_array> [<array_entry>] [0])
+			break
+		endif
+		<array_entry> = (<array_entry> + 1)
+		repeat <array_size>
+		array_size = (<array_size> - <array_entry>)
+		if (<array_size> = 0)
+			return
+		endif
+		begin
+		TimeMarkerReached_SetParams time_offset = <time_offset> array = <event_array> array_entry = <array_entry> arrayofarrays
+		begin
+		if TimeMarkerReached
+			getsongtimems time_offset = <time_offset>
+			break
+		endif
+		wait \{1 gameframe}
+		repeat
+		TimeMarkerReached_ClearParams
+		note = ($<event_array> [<array_entry>] [1])
+		Length = ($<event_array> [<array_entry>] [2])
+		if CompositeObjectExists name = <target>
+			if (<part> = guitar)
+				if ((<note> >= 118) && (<note> <= 127))
+					LaunchEvent type = pose_fret target = <target> Data = {note = <note> note_length = <note_length>}
+				endif
+			else
+				if ((<note> >= 101) && (<note> <= 110))
+					LaunchEvent type = pose_fret target = <target> Data = {note = <note> note_length = <note_length>}
+				endif
+			endif
+		endif
+		<array_entry> = (<array_entry> + 1)
+		repeat <array_size>
+	endif
+endscript
+
+script FretFingers_iterator \{part = ''}
+	FretFingers_iterator_CFunc_Setup
+	begin
+	if FretFingers_iterator_CFunc
+		break
+	endif
+	wait \{1 gameframe}
+	repeat
+	FretFingers_iterator_CFunc_Cleanup
+endscript
+
+script WatchForStartPlaying_iterator 
+	get_song_prefix song = <song_name>
+	FormatText checksumname = event_array '%s_song_expert' s = <song_prefix> addtostringlookup
+	if NOT globalexists name = <event_array> type = array
+		return
+	endif
+	array_entry = 0
+	GetArraySize $<event_array>
+	song_array_size = (<array_size> / $num_song_columns)
+	getsongtimems time_offset = <time_offset>
+	if NOT (<song_array_size> = 0)
+		begin
+		if ((<time> - <skipleadin>) < $<event_array> [<array_entry>])
+			break
+		endif
+		<array_entry> = (<array_entry> + $num_song_columns)
+		repeat <song_array_size>
+		song_array_size = (<song_array_size> - (<array_entry> / $num_song_columns))
+		if (<song_array_size> = 0)
+			return
+		endif
+		TimeMarkerReached_SetParams time_offset = <time_offset> array = <event_array> array_entry = <array_entry>
+		begin
+		if TimeMarkerReached
+			getsongtimems time_offset = <time_offset>
+			break
+		endif
+		wait \{1 gameframe}
+		repeat
+		TimeMarkerReached_ClearParams
+		broadcastevent \{type = start_playing}
+	endif
+endscript
+
+script Drum_iterator 
+	Drum_iterator_CFunc_Setup
+	begin
+	if Drum_iterator_CFunc
+		break
+	endif
+	wait \{1 gameframe}
+	repeat
+	Drum_iterator_CFunc_Cleanup
+endscript
+
+script Drum_cymbal_iterator 
+	get_song_prefix song = <song_name>
+	FormatText checksumname = event_array '%s_drums_notes' s = <song_prefix> addtostringlookup
+	if NOT globalexists name = <event_array> type = array
+		printf \{"FRETPOS ANIMS DISABLED: No midi events found for this song"}
+		return
+	endif
+	array_entry = 0
+	GetArraySize $<event_array>
+	getsongtimems time_offset = <time_offset>
+	if NOT (<array_size> = 0)
+		begin
+		if ((<time> - <skipleadin>) < $<event_array> [<array_entry>] [0])
+			break
+		endif
+		<array_entry> = (<array_entry> + 1)
+		repeat <array_size>
+		array_size = (<array_size> - <array_entry>)
+		if (<array_size> = 0)
+			return
+		endif
+		begin
+		TimeMarkerReached_SetParams time_offset = <time_offset> array = <event_array> array_entry = <array_entry> arrayofarrays
+		begin
+		if TimeMarkerReached
+			getsongtimems time_offset = <time_offset>
+			break
+		endif
+		wait \{1 gameframe}
+		repeat
+		TimeMarkerReached_ClearParams
+		if CompositeObjectExists \{name = drummer}
+			note = ($<event_array> [<array_entry>] [1])
+			Length = ($<event_array> [<array_entry>] [2])
+			if ((<note> >= 37) && (<note> <= 45))
+				switch (<note>)
+					case 44
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal1 timerid = CymbalTimer1 anim = ($cymbal_anims [0]) blendduration = $drum_blend_time
+					case 45
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal2 timerid = CymbalTimer2 anim = ($cymbal_anims [1]) blendduration = $drum_blend_time
+					case 43
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal3 timerid = CymbalTimer3 anim = ($cymbal_anims [2]) blendduration = $drum_blend_time
+					case 41
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal4 timerid = CymbalTimer4 anim = ($cymbal_anims [3]) blendduration = $drum_blend_time
+					case 42
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal4 timerid = CymbalTimer4 anim = ($cymbal_anims [3]) blendduration = $drum_blend_time
+				endswitch
+			elseif ((<note> >= 49) && (<note> <= 57))
+				switch (<note>)
+					case 56
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal1 timerid = CymbalTimer1 anim = ($cymbal_anims [0]) blendduration = $drum_blend_time
+					case 57
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal2 timerid = CymbalTimer2 anim = ($cymbal_anims [1]) blendduration = $drum_blend_time
+					case 55
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal3 timerid = CymbalTimer3 anim = ($cymbal_anims [2]) blendduration = $drum_blend_time
+					case 53
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal4 timerid = CymbalTimer4 anim = ($cymbal_anims [3]) blendduration = $drum_blend_time
+					case 54
+					drummer :hero_play_anim tree = $hero_drumming_branch target = cymbal4 timerid = CymbalTimer4 anim = ($cymbal_anims [3]) blendduration = $drum_blend_time
+				endswitch
+			endif
+		endif
+		<array_entry> = (<array_entry> + 1)
+		repeat <array_size>
+	endif
+endscript
+
+script handle_strum_event 
+	obj_killspawnedscript \{name = hero_strum_guitar}
+	obj_spawnscriptnow hero_strum_guitar params = {note_length = <note_length>}
+endscript
+
+script handle_missed_strum_event 
+	obj_killspawnedscript \{name = hero_strum_guitar}
+	obj_spawnscriptnow hero_strum_guitar params = {note_length = <note_length>}
+endscript
+
+script handle_start_playing 
+	obj_getid
+	extendcrc <ObjID> '_Info' out = info_struct
+	if (<info_struct>.stance = intro || <info_struct>.stance = intro_smstg)
+		handle_change_stance \{stance = stance_a}
+	endif
+endscript
+
+script handle_fret_event 
+	obj_getid
+	extendcrc <ObjID> '_Info' out = info_struct
+	FormatText checksumname = track 'track_%n' n = <note>
+	fret_anims = ($<info_struct>.fret_anims)
+	if ((<note> >= 118) && (<note> <= 127))
+		anim = (<fret_anims>.<track>)
+	elseif ((<note> >= 101) && (<note> <= 110))
+		anim = (<fret_anims>.<track>)
+	else
+		return
+	endif
+	obj_killspawnedscript \{name = hero_play_fret_anim}
+	obj_spawnscriptnow hero_play_fret_anim params = {anim = <anim>}
+endscript
+
+script handle_finger_event 
+	obj_killspawnedscript \{name = hero_play_chord}
+	obj_spawnscriptnow hero_play_chord params = {chord = <chord>}
+endscript
+
+script handle_missed_note 
+	obj_getid
+	extendcrc <ObjID> '_Info' out = info_struct
+	if ($<info_struct>.playing_missed_note = FALSE)
+		change structurename = <info_struct> playing_missed_note = TRUE
+		strum_anims = $Bad_Strums
+		anim_length = ($<info_struct>.last_strum_length)
+		strum_anim = (<strum_anims>.<anim_length> [0])
+		hero_play_strum_anim anim = <strum_anim> blendduration = 0.1
+	endif
+endscript
+
+script handle_hit_note 
+	obj_getid
+	handle_hit_note_CFunc
+endscript
+
+script handle_change_stance \{Speed = 1.0}
+	obj_getid
+	extendcrc <ObjID> '_Info' out = info_struct
+	display_debug_info = FALSE
+	if (should_display_debug_info)
+		display_debug_info = TRUE
+	endif
+	if GotParam \{no_wait}
+		anim_set = ($<info_struct>.anim_set)
+		old_stance = ($<info_struct>.stance)
+		if play_stance_transition_cfunc anim_set = <anim_set> old_stance = <old_stance> new_stance = <stance>
+			hero_play_anim anim = <anim_to_run> Speed = <Speed>
+			ragdoll_markforreset
+			hero_wait_until_anim_finished
+		else
+			ragdoll_markforreset
+		endif
+		change structurename = <info_struct> stance = <stance>
+		change structurename = <info_struct> next_stance = <stance>
+		if (<display_debug_info> = TRUE)
+			printf channel = animinfo "%a stance is immediately changing to %b ...." a = <ObjID> b = <stance>
+		endif
+		if (<ObjID> = guitarist || <ObjID> = bassist)
+			if (<stance> = intro || <stance> = intro_smstg || <stance> = stance_frontend || <stance> = stance_frontend_guitar)
+				change structurename = <info_struct> disable_arms = 2
+				change structurename = <info_struct> next_anim_disable_arms = 2
+			else
+				change structurename = <info_struct> disable_arms = 0
+				change structurename = <info_struct> next_anim_disable_arms = 0
+			endif
+			Obj_SwitchScript \{guitarist_idle}
+		else
+			Obj_SwitchScript \{bandmember_idle}
+		endif
+	else
+		if (<display_debug_info> = TRUE)
+			printf channel = animinfo "%a is queuing stance change to %b............." a = <ObjID> b = <stance>
+		endif
+		change structurename = <info_struct> next_stance = <stance>
+		if (<ObjID> = guitarist || <ObjID> = bassist)
+			if (<stance> = intro || <stance> = intro_smstg || <stance> = stance_frontend || <stance> = stance_frontend_guitar)
+				change structurename = <info_struct> next_anim_disable_arms = 2
+			else
+				change structurename = <info_struct> next_anim_disable_arms = 0
+			endif
+		endif
+	endif
+	return
+endscript
+
+script queue_change_stance 
+	obj_getid
+	extendcrc <ObjID> '_Info' out = info_struct
+	change structurename = <info_struct> next_stance = <stance>
+endscript
+
+script handle_play_anim 
+	obj_getid
+	extendcrc <ObjID> '_Info' out = info_struct
+	anim_set = ($<info_struct>.anim_set)
+	stance = ($<info_struct>.stance)
+	display_debug_info = FALSE
+	if (should_display_debug_info)
+		display_debug_info = TRUE
+	endif
+	if GotParam \{no_wait}
+		if (<display_debug_info> = TRUE)
+			printf channel = animinfo "%a will immediately start the %b anim........" a = <ObjID> b = <anim>
+		endif
+		change structurename = <info_struct> current_anim = <anim>
+		change structurename = <info_struct> next_anim = None
+		if GotParam \{repeat_count}
+			change structurename = <info_struct> anim_repeat_count = <repeat_count>
+		else
+			change structurename = <info_struct> anim_repeat_count = 1
+		endif
+		if GotParam \{Cycle}
+			change structurename = <info_struct> cycle_anim = TRUE
+		else
+			change structurename = <info_struct> cycle_anim = FALSE
+		endif
+		if (<name> = guitarist || <name> = bassist)
+			if GotParam \{disable_auto_arms}
+				change structurename = <info_struct> disable_arms = 2
+			elseif GotParam \{disable_auto_strum}
+				change structurename = <info_struct> disable_arms = 1
+			else
+				change structurename = <info_struct> disable_arms = 0
+			endif
+		endif
+		ragdoll_markforreset
+		obj_killspawnedscript \{name = hero_play_adjusting_random_anims}
+		obj_spawnscriptnow hero_play_adjusting_random_anims params = {anim = <anim>}
+	else
+		if (<display_debug_info> = TRUE)
+			if (<info_struct>.next_anim != None)
+				printf channel = animinfo "******* %a is replacing queued anim %b with %c ******* " a = <ObjID> b = (<info_struct>.next_anim) c = <anim>
+			else
+				printf channel = animinfo "%a is queueing the %b anim........" a = <ObjID> b = <anim>
+			endif
+		endif
+		change structurename = <info_struct> next_anim = <anim>
+		if GotParam \{repeat_count}
+			change structurename = <info_struct> next_anim_repeat_count = <repeat_count>
+		else
+			change structurename = <info_struct> next_anim_repeat_count = 1
+		endif
+		if GotParam \{Cycle}
+			change structurename = <info_struct> cycle_next_anim = TRUE
+		else
+			change structurename = <info_struct> cycle_next_anim = FALSE
+		endif
+		if (<name> = guitarist || <name> = bassist)
+			if GotParam \{disable_auto_arms}
+				change structurename = <info_struct> next_anim_disable_arms = 2
+			elseif GotParam \{disable_auto_strum}
+				change structurename = <info_struct> next_anim_disable_arms = 1
+			else
+				change structurename = <info_struct> next_anim_disable_arms = 0
+			endif
+		endif
+	endif
+endscript
+
+script handle_walking 
+	obj_getid
+	if (<ObjID> != <name>)
+		return
+	endif
+	extendcrc <ObjID> '_Info' out = info_struct
+	if ($<info_struct>.allow_movement != TRUE)
+		return
+	endif
+	if NOT ($<info_struct>.stance = stance_a)
+		anim_set = ($<info_struct>.anim_set)
+		old_stance = ($<info_struct>.stance)
+		if play_stance_transition_cfunc anim_set = <anim_set> old_stance = <old_stance> new_stance = stance_a
+			hero_play_anim anim = <anim_to_run>
+			hero_wait_until_anim_finished
+		endif
+		change structurename = <info_struct> stance = stance_a
+	endif
+	change structurename = <info_struct> disable_arms = 0
+	Obj_SwitchScript guitarist_walking params = {<...>}
+endscript
+
+script play_drum_anim \{arm = left blendduration = $drum_blend_time}
+	if NOT GotParam \{anim}
+		return
+	endif
+	if (<arm> = left)
+		obj_killspawnedscript \{name = play_drummer_left_arm_anim}
+		obj_spawnscriptnow play_drummer_left_arm_anim params = {anim = <anim> blendduration = <blendduration>}
+	else
+		obj_killspawnedscript \{name = play_drummer_right_arm_anim}
+		obj_spawnscriptnow play_drummer_right_arm_anim params = {anim = <anim>}
+	endif
+endscript
+
+script play_drummer_left_arm_anim 
+	hero_play_anim tree = $hero_drumming_branch timerid = leftarm_timer target = DrummerLeftArm anim = <anim> blendduration = <blendduration>
+	hero_wait_until_anim_finished \{timer = leftarm_timer}
+	wait \{$drummer_arm_blend_out_delay seconds}
+	hero_play_anim tree = $hero_drumming_branch timerid = leftarm_timer target = DrummerLeftArm anim = ($drummer_anims.stickdown_l) blendduration = 0.6
+	wait \{$drummer_clear_arm_twist_value_delay seconds}
+	change \{structurename = drummer_info last_left_arm_note = 0}
+endscript
+
+script play_drummer_right_arm_anim 
+	hero_play_anim tree = $hero_drumming_branch timerid = rightarm_timer target = DrummerRightArm anim = <anim> blendduration = <blendduration>
+	hero_wait_until_anim_finished \{timer = rightarm_timer}
+	wait \{$drummer_arm_blend_out_delay seconds}
+	hero_play_anim tree = $hero_drumming_branch timerid = rightarm_timer target = DrummerRightArm anim = ($drummer_anims.stickdown_r) blendduration = 0.6
+	wait \{$drummer_clear_arm_twist_value_delay seconds}
+	change \{structurename = drummer_info last_right_arm_note = 0}
+endscript
