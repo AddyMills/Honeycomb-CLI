@@ -4,7 +4,7 @@ using GH_Toolkit_Core.PAK;
 string folderPath = args[0];
 string rootPath = Path.GetDirectoryName(folderPath);
 string pakName = Path.GetRelativePath(rootPath, folderPath);
-PAK.PakCompiler pakCompiler = new PAK.PakCompiler("GH3", true, true);
+PAK.PakCompiler pakCompiler = new PAK.PakCompiler("GHWT", false, false);
 var (pak, pab, console) = pakCompiler.CompilePAK(folderPath, "PC");
 string extension;
 if (console == "PS2")
