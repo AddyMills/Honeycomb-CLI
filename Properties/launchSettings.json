@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\FJ_Mo\\source\\repos\\AddyMills\\PAK-Extractor\\to_extract\\youreallineed_song\""
+      "commandLineArgs": "\"D:\\Visual Studio\\Repos\\PAK-Extractor\\to_extract\\qb\" -gh3"
     }
   }
 }

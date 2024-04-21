@@ -4,12 +4,37 @@ using GH_Toolkit_Core.PAK;
 string folderPath = args[0];
 string rootPath = Path.GetDirectoryName(folderPath);
 string pakName = Path.GetRelativePath(rootPath, folderPath);
-PAK.PakCompiler pakCompiler = new PAK.PakCompiler("GHWT", false, false);
-var (pak, pab, console) = pakCompiler.CompilePAK(folderPath, "PC");
+
+string gameVersion = "GHWT"; // Default value
+bool isQb = pakName == "qb" ? true : false;
+bool split = false;
+string console = "PC";
+
+if (args.Contains("-gh3"))
+{
+    gameVersion = "GH3";
+}
+
+if (isQb || args.Contains("-split"))
+{
+    split = true;
+}
+
+if (args.Contains("-console"))
+{
+    console = args[Array.IndexOf(args, "-console") + 1];
+}
+
+PAK.PakCompiler pakCompiler = new PAK.PakCompiler(gameVersion, isQb, split);
+var (pak, pab) = pakCompiler.CompilePAK(folderPath, console);
 string extension;
 if (console == "PS2")
 {
     extension = ".ps2";
+}
+else if (console == "PS3")
+{
+    extension = ".PS3";
 }
 else
 {
