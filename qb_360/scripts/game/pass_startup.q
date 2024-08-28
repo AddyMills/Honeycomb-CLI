@@ -1,6 +1,0 @@
-
-script CompositeObjectManager_startup 
-	ProcessorGroup_RegisterDefault
-	PassGroup_RegisterDefault
-	CompositeObjects_RegisterDefault
-endscript

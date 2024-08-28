@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "\"D:\\Visual Studio\\Repos\\PAK-Extractor\\to_extract\\qb\" -gh3"
+      "commandLineArgs": "compile \"F:\\GH Modding\\GHM\" -g GHVH -c PS3"
     }
   }
 }
