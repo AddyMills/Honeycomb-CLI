@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "compile \"F:\\GH Modding\\GHM\" -g GHVH -c PS3"
+      "commandLineArgs": "extract \"F:\\GH Modding\\americanwoman_song.pak.xen\" -g GHM -c 360"
     }
   }
 }

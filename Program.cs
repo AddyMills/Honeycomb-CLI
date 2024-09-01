@@ -14,6 +14,25 @@ void ShowHelpMenu()
     Console.WriteLine("  -s, --split                                Splits the final file into a PAK and PAB file.");
 }
 
+void RunDeflater(string[] args)
+{
+    if (args.Length < 2)
+    {
+        ShowHelpMenu();
+        return;
+    }
+
+    string filePath = args[1];
+
+    List<string> files = GetFilesFromFolder(filePath);
+    foreach (string file in files)
+    {
+        byte[] data = DeflateData(file);
+        string output = Path.ChangeExtension(file, ".deflated");
+        File.WriteAllBytes(output, data);
+    }
+}
+
 void RunExtractor(string[] args)
 {
     if (args.Length < 2)
@@ -23,7 +42,7 @@ void RunExtractor(string[] args)
     }
 
     string filePath = args[1];
-    bool convertQ = !(args.Contains("-q") && args.Contains("--qb"));
+    bool convertQ = !(args.Contains("-q") || args.Contains("--qb"));
 
     List<string> files = GetFilesFromFolder(filePath);
     foreach (string file in files)
@@ -134,6 +153,11 @@ if (args.Contains("extract"))
 else if (args.Contains("compile"))
 {
     mode = "compile";  
+}
+else if (args.Contains("deflate"))
+{
+    RunDeflater(args);
+    return;
 }
 
 if (string.IsNullOrEmpty(mode) || (mode != "extract" && mode != "compile"))
