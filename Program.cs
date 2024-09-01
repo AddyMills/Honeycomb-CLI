@@ -10,8 +10,11 @@ void ShowHelpMenu()
     Console.WriteLine("Options for extract mode:");
     Console.WriteLine("  -q, --qb                                   Specifies that the scripts are not converted to text.");
     Console.WriteLine("Options for compile mode:");
+    Console.WriteLine("  -g <game>, --game <game>                   Specifies the game version.");
     Console.WriteLine("  -c, --console <console>                    Specifies the console type (e.g., PC, PS2, PS3). Default is PC.");
     Console.WriteLine("  -s, --split                                Splits the final file into a PAK and PAB file.");
+    Console.WriteLine("Available games options:");
+    Console.WriteLine("GH3, GHA, GHWT, GHM, GHSH, GHVH, GH5, WOR, GHWOR");
 }
 
 void RunDeflater(string[] args)
@@ -85,7 +88,7 @@ void RunCompiler(string[] args)
 
     if (consoleIndex != -1 && consoleIndex + 1 < args.Length)
     {
-        console = args[consoleIndex + 1];
+        console = args[consoleIndex + 1].ToUpper();
     }
 
     // Determine if it's a QB file based on the folder name
