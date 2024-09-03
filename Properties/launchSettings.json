@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "compile \"F:\\GH Modding\\Freg\\qb\" -g GHM -c 360"
+      "commandLineArgs": "compile \"F:\\GH Modding\\Freg\\qb\" -a \"testing asset\" -g GHM -c PS3"
     }
   }
 }

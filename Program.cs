@@ -10,7 +10,8 @@ void ShowHelpMenu()
     Console.WriteLine("Options for extract mode:");
     Console.WriteLine("  -q, --qb                                   Specifies that the scripts are not converted to text.");
     Console.WriteLine("Options for compile mode:");
-    Console.WriteLine("  -g <game>, --game <game>                   Specifies the game version.");
+    Console.WriteLine("  -g <game>, --game <game>                   Specifies the game version. Required.");
+    Console.WriteLine("  -a, --asset <string>                       Specifies the asset context of the PAK. Can be a string or hex value starting with 0x");
     Console.WriteLine("  -c, --console <console>                    Specifies the console type (e.g., PC, PS2, PS3). Default is PC.");
     Console.WriteLine("  -s, --split                                Splits the final file into a PAK and PAB file.");
     Console.WriteLine("Available games options:");
@@ -91,14 +92,38 @@ void RunCompiler(string[] args)
         console = args[consoleIndex + 1].ToUpper();
     }
 
+    string? assetContext = null;
+    int assetIndex = Array.IndexOf(args, "-a");
+    if (assetIndex == -1)
+    {
+        assetIndex = Array.IndexOf(args, "--asset");
+    }
+
+    if (assetIndex != -1 && assetIndex + 1 < args.Length)
+    {
+        assetContext = args[assetIndex + 1];
+    }
+
     // Determine if it's a QB file based on the folder name
-    string folderPath = args[1];
+    string folderPath = "";
+    try
+    {
+        folderPath = Path.GetFullPath(args[1]);
+    }
+    catch
+    {
+        Console.WriteLine("Invalid folder path.");
+        ShowHelpMenu();
+        return;
+    }
+    
     if (!Directory.Exists(folderPath))
     {
         Console.WriteLine("Folder not found.");
         ShowHelpMenu();
         return;
     }
+    Console.WriteLine("Compiling files from: " + folderPath);
     string rootPath = Path.GetDirectoryName(folderPath);
     string pakName = Path.GetRelativePath(rootPath, folderPath);
     isQb = pakName.Equals("qb", StringComparison.OrdinalIgnoreCase);
@@ -109,7 +134,7 @@ void RunCompiler(string[] args)
     }
 
     // Compile PAK and PAB files
-    PakCompiler pakCompiler = new PakCompiler(gameVersion, isQb, split);
+    PakCompiler pakCompiler = new PakCompiler(gameVersion, console, assetContext, isQb, split);
     var (pak, pab) = pakCompiler.CompilePAK(folderPath, console);
     string extension = console == "PS2" ? ".ps2" : (console == "PS3" ? ".PS3" : ".xen");
 
