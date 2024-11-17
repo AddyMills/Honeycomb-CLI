@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "extract \"F:\\GH Modding\\GHSH\\QB.PAK.PS3\" -a \"testing asset\" -g GHM -c PS3"
+      "commandLineArgs": "pak extract \"F:\\GH Modding\\Same Old Conversion\\sameoldsonganddance_song.pak.xen\""
     }
   }
 }
