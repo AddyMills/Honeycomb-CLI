@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "pak extract \"F:\\GH Modding\\Same Old Conversion\\sameoldsonganddance_song.pak.xen\""
+      "commandLineArgs": "pak compile -g wor -c wii \"D:\\Guitar Hero\\PAK Testing\\qb\""
     }
   }
 }

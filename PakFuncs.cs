@@ -12,21 +12,22 @@ namespace PAK_Compiler
         private string[] Args;
         private Action ToRun;
         private string HelpReason = "";
+        private string? RunProg = null;
         public PakFuncs(string[] args)
         {
             if (args.Length > 0)
             {
-                string runProg = args[0];
+                RunProg = args[0];
                 Args = args;
-                if (runProg == "deflate")
+                if (RunProg == "decompress" || RunProg == "deflate")
                 {
                     ToRun = RunDeflater;
                 }
-                else if (runProg == "extract")
+                else if (RunProg == "extract")
                 {
                     ToRun = RunExtractor;
                 }
-                else if (runProg == "compile")
+                else if (RunProg == "compile")
                 {
                     ToRun = RunCompiler;
                 }
@@ -39,7 +40,22 @@ namespace PAK_Compiler
             {
                 ToRun = ShowHelpMenu;
             }
-            ToRun();
+            try
+            {
+                ToRun();
+            }
+            catch (Exception e)
+            {
+                ErrorHandler(e);
+            }
+        }
+        private void ErrorHandler(Exception e)
+        {
+            HelpReason = $"An error occurred while running {RunProg}:";
+            Console.WriteLine(e.Message);
+            ShowHelpMenu();
+            Console.WriteLine("\nPress any key to exit.");
+            Console.ReadKey();
         }
         public void ShowHelpMenu()
         {
@@ -50,10 +66,11 @@ namespace PAK_Compiler
                 Console.WriteLine();
             }
 
-            Console.WriteLine("Usage: honeycomb <mode> <options>");
+            Console.WriteLine("Usage: pak <mode> <options>");
             Console.WriteLine("Modes:");
             Console.WriteLine("  extract <filePath> [options]               Extracts files from a PAK archive.");
             Console.WriteLine("  compile <folderPath> -g <game> [options]   Compiles PAK files.");
+            Console.WriteLine("  deflate <filePath>                         Decompresses a PAK file.");
             Console.WriteLine("Options for extract mode:");
             Console.WriteLine("  -q, --qb                                   Specifies that the scripts are not converted to text.");
             Console.WriteLine("Options for compile mode:");
@@ -62,18 +79,27 @@ namespace PAK_Compiler
             Console.WriteLine("  -c, --console <console>                    Specifies the console type (e.g., PC, PS2, PS3). Default is PC.");
             Console.WriteLine("  -s, --split                                Splits the final file into a PAK and PAB file.");
             Console.WriteLine("Available games options:");
-            Console.WriteLine("GH3, GHA, GHWT, GHM, GHSH, GHVH, GH5, WOR, GHWOR");
+            Console.WriteLine("GH3, GHA, GHWT, GHM, GHSH, GHGH, GHVH, GH5, WOR, GHWOR");
+            Console.WriteLine("Available console options:");
+            Console.WriteLine("360, PC, PS2, PS3, WII (lowercase for all options works too)");
         }
         void RunDeflater()
         {
             if (Args.Length < 2)
             {
-                HelpReason = "No file path provided to deflate.";
+                HelpReason = "No file path provided to decompress.";
                 ShowHelpMenu();
                 return;
             }
 
             string filePath = Args[1];
+
+            if (!File.Exists(filePath))
+            {
+                HelpReason = "Invalid file path provided.";
+                ShowHelpMenu();
+                return;
+            }
 
             List<string> files = GetFilesFromFolder(filePath);
             foreach (string file in files)
@@ -143,7 +169,7 @@ namespace PAK_Compiler
             int gameIndex = Array.IndexOf(Args, "-g");
             if (gameIndex != -1 && gameIndex + 1 < Args.Length)
             {
-                gameVersion = Args[gameIndex + 1];
+                gameVersion = Args[gameIndex + 1].ToUpper();
             }
             else
             {
@@ -186,6 +212,12 @@ namespace PAK_Compiler
                     break;
                 }
             }
+            if (folderPath == null)
+            {
+                HelpReason = "Invalid or no folder path provided to compile.";
+                ShowHelpMenu();
+                return;
+            }
             Console.WriteLine("Compiling files from: " + folderPath);
             string rootPath = Path.GetDirectoryName(folderPath);
             string pakName = Path.GetRelativePath(rootPath, folderPath);
@@ -199,7 +231,22 @@ namespace PAK_Compiler
             // Compile PAK and PAB files
             PakCompiler pakCompiler = new PakCompiler(gameVersion, console, assetContext, isQb, split);
             var (pak, pab) = pakCompiler.CompilePAK(folderPath, console);
-            string extension = console == "PS2" ? ".ps2" : (console == "PS3" ? ".PS3" : ".xen");
+            string extension = "";
+            switch (console)
+            {
+                case "PS2":
+                    extension = ".ps2";
+                    break;
+                case "PS3":
+                    extension = ".PS3";
+                    break;
+                case "WII":
+                    extension = ".ngc";
+                    break;
+                default:
+                    extension = ".xen";
+                    break;
+            }
 
             string pakPath = Path.Join(rootPath, pakName + ".pak" + extension);
             string pabPath = Path.Join(rootPath, pakName + ".pab" + extension);
