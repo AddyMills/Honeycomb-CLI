@@ -124,14 +124,15 @@ namespace PAK_Compiler
 
             foreach (string arg in Args)
             {
-                if (File.Exists(arg))
+                string absPath = Path.GetFullPath(arg);
+                if (File.Exists(absPath))
                 {
-                    filePath = arg;
+                    filePath = absPath;
                     break;
                 }
-                else if (Directory.Exists(arg))
+                else if (Directory.Exists(absPath))
                 {
-                    filePath = arg;
+                    filePath = absPath;
                     break;
                 }
             }

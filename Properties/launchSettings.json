@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "pak compile -g wor -c wii \"D:\\Guitar Hero\\PAK Testing\\qb\""
+      "commandLineArgs": "pak extract bdlc10007_song.pak.xen"
     }
   }
 }
