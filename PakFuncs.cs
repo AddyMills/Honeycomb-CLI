@@ -53,6 +53,7 @@ namespace PAK_Compiler
         {
             HelpReason = $"An error occurred while running {RunProg}:";
             Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
             ShowHelpMenu();
             Console.WriteLine("\nPress any key to exit.");
             Console.ReadKey();
