@@ -8,6 +8,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Redpoint.ThirdParty.System.CommandLine" Version="2024.1348.253" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\GH-Toolkit\GH-Toolkit-Core.csproj" />
 	</ItemGroup>
