@@ -1,22 +1,98 @@
 ﻿using GH_Toolkit_Core.Methods;
 using PAK_Compiler;
-
-string runProg = args[0];
-string[] Args = args.Skip(1).ToArray();
+using System.CommandLine;
+using System.CommandLine.Invocation;
 
 void ShowHelp()
 {
     Console.WriteLine("Usage:");
-    Console.WriteLine("  pak <args> - Run the PAK compiler with specified arguments.");
+    Console.WriteLine("  pak <args> - Compile, extract, or deflate PAK files with specified arguments.");
+    Console.WriteLine("  makesong <args> - Compile a Clone Hero style song folder to a PAK file.");
     Console.WriteLine("For help with any of the commands, type '<command> --help'.");
     // Add more usage instructions as needed
 }
 
-if (runProg == "pak")
+Command makePakCommand() 
 {
-    PakFuncs pakFuncs = new PakFuncs(Args);
+    var pakCommand = new Command("pak", "Compile, extract, or deflate PAK files with specified arguments.");
+    var pakPathArgument = new Argument<string>("pakPath", "The path to the PAK file.");
+
+    var extractPakCommand = new Command("extract", "Extract a PAK file to a folder."); 
+    var toQbOption = new Option<bool>(["--qb", "-q"], "Do not convert QB files to Q when extracting.");
+    extractPakCommand.AddArgument(pakPathArgument);
+    extractPakCommand.AddOption(toQbOption);
+    extractPakCommand.SetHandler(PakFuncs.RunExtractor, pakPathArgument, toQbOption);
+
+    var deflatePakCommand = new Command("deflate", "Deflate a PAK file.");
+    deflatePakCommand.AddArgument(pakPathArgument);
+    deflatePakCommand.SetHandler(PakFuncs.RunDeflater, pakPathArgument);
+
+    var compilePakCommand = new Command("compile", "Compile a PAK file from a folder.");
+    var folderPathArgument = new Argument<string>("folderPath", "The path to the folder to compile.");
+    compilePakCommand.AddArgument(folderPathArgument);
+    var gamePakOption = new Option<string>(["--game", "-g"], "The game the PAK file is for (required).");
+    compilePakCommand.AddOption(gamePakOption);
+    var assetOption = new Option<string>(["--asset", "-a"], "Specifies the asset context of the PAK. Can be a string or hex value starting with 0x.");
+    compilePakCommand.AddOption(assetOption);
+    var consoleOption = new Option<string>(["--console", "-c"], "The console the PAK file is for.");
+    compilePakCommand.AddOption(consoleOption);
+    var splitOption = new Option<bool>(["--split", "-s"], "Splits the final file into a PAK and PAB file.");
+    compilePakCommand.AddOption(splitOption);
+    compilePakCommand.SetHandler(PakFuncs.RunCompiler, folderPathArgument, gamePakOption, consoleOption, splitOption, assetOption);
+
+    pakCommand.AddCommand(extractPakCommand);
+    pakCommand.AddCommand(deflatePakCommand);
+    pakCommand.AddCommand(compilePakCommand);
+
+    return pakCommand;
 }
-else
+
+
+Command gameOptionCommand()
+{
+    var makeSongCommand = new Command("makesong", "Compile a Clone Hero style song folder to a PAK file.");
+    var folderArgument = new Argument<string>("folder", "The folder to compile.");
+    makeSongCommand.AddArgument(folderArgument);
+    var gameOption = new Option<string>(new string[] { "--game", "-g" }, "The game the song is for.");
+    makeSongCommand.AddOption(gameOption);
+    var platformOption = new Option<string>(new string[] { "--console", "-c" }, "The console the song is for.");
+    makeSongCommand.AddOption(platformOption);
+
+    makeSongCommand.SetHandler((folder, game, console) =>
+    {
+        MakeSong makeSong = new MakeSong(folder, game, console);
+    }, folderArgument, gameOption, platformOption);
+    return makeSongCommand;
+}
+
+var pakCommand = makePakCommand();
+var makeSongCommand = gameOptionCommand();
+
+var rootCommand = new RootCommand
+{
+    pakCommand,
+    makeSongCommand
+};
+
+rootCommand.Invoke(args);
+
+/*
+try
+{
+    string runProg = args[0];
+    string[] Args = args.Skip(1).ToArray();
+
+    switch (runProg)
+    {
+        case "pak":
+            PakFuncs pakFuncs = new PakFuncs(Args);
+            break;
+        default:
+            ShowHelp();
+            break;
+    }
+}
+catch
 {
     ShowHelp();
-}
+}*/
