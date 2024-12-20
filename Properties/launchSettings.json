@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "pak extract bdlc10007_song.pak.xen"
+      "commandLineArgs": "makesong \"D:\\RB\\Songs\\Arch Enemy\\Handshake With Hell\\Compile\" -g GH3 -c PC"
     }
   }
 }
