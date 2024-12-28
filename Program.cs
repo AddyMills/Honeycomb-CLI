@@ -65,13 +65,36 @@ Command gameOptionCommand()
     return makeSongCommand;
 }
 
+Command WadOption()
+{
+    var wadCommand = new Command("wad", "Compile or extract WAD files for PS2 games.");
+
+    var extractWadCommand = new Command("extract", "Extract a WAD file to a folder.");
+    var wadPathArgument = new Argument<string>("wadPath", "The path to the WAD file.");
+    extractWadCommand.AddArgument(wadPathArgument);
+    extractWadCommand.SetHandler(WadFuncs.RunWadExtractor, wadPathArgument);
+
+    var compileWadCommand = new Command("compile", "Compile a WAD file from a folder.");
+    var folderPathArgument = new Argument<string>("folderPath", "The path to the folder to compile.");
+    compileWadCommand.AddArgument(folderPathArgument);
+    compileWadCommand.SetHandler(WadFuncs.RunWadCompiler, folderPathArgument);
+
+    wadCommand.AddCommand(extractWadCommand);
+    wadCommand.AddCommand(compileWadCommand);
+
+    return wadCommand;
+}
+
 var pakCommand = makePakCommand();
 var makeSongCommand = gameOptionCommand();
+var wadCommand = WadOption();
+//var qbCommand = qbOptionCommand();
 
 var rootCommand = new RootCommand
 {
     pakCommand,
-    makeSongCommand
+    makeSongCommand,
+    wadCommand
 };
 
 rootCommand.Invoke(args);
