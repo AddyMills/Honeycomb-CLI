@@ -94,7 +94,14 @@ namespace PAK_Compiler
                 ShowHelpMenu();
                 return;
             }
-
+            console = console.ToUpper();
+            gameVersion = gameVersion.ToUpper();
+            bool edat = false;
+            if (console == "PS3E")
+            {
+                edat = true;
+                console = "PS3";
+            }
             bool isQb = false;
 
             // Determine if it's a QB file based on the folder name
@@ -113,11 +120,12 @@ namespace PAK_Compiler
             string rootPath = Path.GetDirectoryName(folderPath);
             string pakName = Path.GetRelativePath(rootPath, folderPath);
             isQb = pakName.Equals("qb", StringComparison.OrdinalIgnoreCase);
-
+            split = isQb ? true : split;
             // Compile PAK and PAB files
             PakCompiler pakCompiler = new PakCompiler(gameVersion, console, assetContext, isQb, split);
             var (pak, pab) = pakCompiler.CompilePAK(folderPath, console);
             string extension = "";
+
             switch (console)
             {
                 case "PS2":
@@ -139,6 +147,11 @@ namespace PAK_Compiler
 
             if (console == "PS3")
             {
+                if (edat)
+                {
+                    pakPath += ".edat";
+                    pabPath += ".edat";
+                }
                 pakPath = pakPath.ToUpper();
                 pabPath = pabPath.ToUpper();
             }
