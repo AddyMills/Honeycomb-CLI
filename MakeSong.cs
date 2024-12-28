@@ -7,7 +7,9 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using GH_Toolkit_Core.INI;
 using GH_Toolkit_Core.MIDI;
+using static GH_Toolkit_Core.QB.QBConstants;
 using static GH_Toolkit_Core.Methods.CreateForGame;
+using GH_Toolkit_Core.PAK;
 
 namespace PAK_Compiler
 {
@@ -37,9 +39,35 @@ namespace PAK_Compiler
         {
             GetDataFromFolder();
             var songInfo = SongData.GetSongInfo();
+            string[] dlcName = { Game!, songInfo.Artist, songInfo.Title , songInfo.Year.ToString(), songInfo.Charter, songInfo.IsCover.ToString() };
+            var dlcNum = MakeConsoleChecksum(dlcName);
+            if (Platform! != CONSOLE_PC)
+            {
+                songInfo.Checksum = $"dlc{dlcNum}";
+            }
             var metadata = new GhMetadata(songInfo);
-
+            var fileInfo = SongData.GetFilePathInfo();
+            if (!(fileInfo.DoesMidiExist))
+            {
+                Console.WriteLine("MIDI file not found in the folder.");
+                return;
+            }
+            var (pakFile, doubleKick) = PAK.CreateSongPackage(
+                midiPath: fileInfo.MidiFile,
+                savePath: Folder,
+                songName: metadata.Checksum,
+                game: Game,
+                gameConsole: Platform,
+                skaPath: fileInfo.SkaFiles,
+                perfOverride: fileInfo.PerfOverride,
+                songScripts: fileInfo.SongScripts,
+                skaSource: songInfo.SkaSource,
+                venueSource: songInfo.VenueSource,
+                hopoThreshold: metadata.HmxHopoThreshold
+                
+                );
         }
+
         private void GetDataFromFolder()
         {
             SongData.SetFilePathInfo(iniParser.AssignFiles(Folder, Game));
