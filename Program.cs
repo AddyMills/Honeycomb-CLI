@@ -38,6 +38,7 @@ Command makePakCommand()
     compilePakCommand.AddOption(consoleOption);
     var splitOption = new Option<bool>(["--split", "-s"], "Splits the final file into a PAK and PAB file.");
     compilePakCommand.AddOption(splitOption);
+
     compilePakCommand.SetHandler(PakFuncs.RunCompiler, folderPathArgument, gamePakOption, consoleOption, splitOption, assetOption);
 
     pakCommand.AddCommand(extractPakCommand);
@@ -63,6 +64,25 @@ Command gameOptionCommand()
         MakeSong makeSong = new MakeSong(folder, game, console);
     }, folderArgument, gameOption, platformOption);
     return makeSongCommand;
+}
+
+Command qbOptionCommand()
+{
+    var qbCommand = new Command("qb", "Compile or decompile a QB file. (not recommended for most cases, use the PAK compiler to compile Q files directly into PAKs)");
+    var qPathArgument = new Argument<string>("qpath", "The path to the Q or QB file.");
+    qbCommand.AddArgument(qPathArgument);
+
+    var gameOption = new Option<string>(new string[] { "--game", "-g" }, "The game the QB file is for.");
+    qbCommand.AddOption(gameOption);
+
+    var platformOption = new Option<string>(new string[] { "--console", "-c" }, "The console the song is for (default 360/PS3/PC).");
+    platformOption.SetDefaultValue("360");
+    qbCommand.AddOption(platformOption);
+
+    qbCommand.SetHandler(QbFuncs.RunQbCompiler, qPathArgument, gameOption, platformOption);
+
+    return qbCommand;
+
 }
 
 Command WadOption()

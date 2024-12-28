@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "makesong \"D:\\RB\\Songs\\Arch Enemy\\Handshake With Hell\\Compile\" -g GH3 -c PC"
+      "commandLineArgs": "wad compile \"D:\\RB\\GH3\\PS2 ISO\\WAD Extract\""
     }
   }
 }
