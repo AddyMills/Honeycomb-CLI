@@ -120,7 +120,7 @@ namespace PAK_Compiler
             string rootPath = Path.GetDirectoryName(folderPath);
             string pakName = Path.GetRelativePath(rootPath, folderPath);
             isQb = pakName.Equals("qb", StringComparison.OrdinalIgnoreCase);
-            split = isQb ? true : split;
+            split = (isQb && console != "WII") ? true : split;
             // Compile PAK and PAB files
             PakCompiler pakCompiler = new PakCompiler(gameVersion, console, assetContext, isQb, split);
             var (pak, pab) = pakCompiler.CompilePAK(folderPath, console);

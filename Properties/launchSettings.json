@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "wad compile \"D:\\RB\\GH3\\PS2 ISO\\WAD Extract\""
+      "commandLineArgs": "pak extract \"F:\\Github\\NS-GH-Permadeath\\GH3\\STFS\""
     }
   }
 }
