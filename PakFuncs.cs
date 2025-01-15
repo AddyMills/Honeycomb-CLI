@@ -142,18 +142,21 @@ namespace PAK_Compiler
                     break;
             }
 
-            string pakPath = Path.Join(rootPath, pakName + ".pak" + extension);
-            string pabPath = Path.Join(rootPath, pakName + ".pab" + extension);
+            string fullPakName = pakName + ".pak" + extension;
+            string fullPabName = pakName + ".pab" + extension;
+
+            string pakPath = Path.Join(rootPath, fullPakName);
+            string pabPath = Path.Join(rootPath, fullPabName);
 
             if (console == "PS3")
             {
                 if (edat)
                 {
-                    pakPath += ".edat";
-                    pabPath += ".edat";
+                    fullPakName += ".edat";
+                    fullPabName += ".edat";
                 }
-                pakPath = pakPath.ToUpper();
-                pabPath = pabPath.ToUpper();
+                pakPath = Path.Join(rootPath, fullPakName.ToUpper());
+                pabPath = Path.Join(rootPath, fullPabName.ToUpper());
             }
 
             if (pab != null)
