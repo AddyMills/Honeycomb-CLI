@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "pak compile -g ghwor -c wii \"D:\\Visual Studio\\Repos\\Pak-Extractor\\to_extract\\qb_wor_wii\""
+      "commandLineArgs": "pak compile -g ghwor -c wii \"F:\\Github\\NS-GH-Permadeath\\GH3\\dl2000000001\""
     }
   }
 }

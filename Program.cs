@@ -38,8 +38,10 @@ Command makePakCommand()
     compilePakCommand.AddOption(consoleOption);
     var splitOption = new Option<bool>(["--split", "-s"], "Splits the final file into a PAK and PAB file.");
     compilePakCommand.AddOption(splitOption);
+    var outputOption = new Option<string>(["--output", "-o"], "The output folder path for the compiled PAK file.");
+    compilePakCommand.AddOption(outputOption);
 
-    compilePakCommand.SetHandler(PakFuncs.RunCompiler, folderPathArgument, gamePakOption, consoleOption, splitOption, assetOption);
+    compilePakCommand.SetHandler(PakFuncs.RunCompiler, folderPathArgument, gamePakOption, consoleOption, splitOption, assetOption, outputOption);
 
     pakCommand.AddCommand(extractPakCommand);
     pakCommand.AddCommand(deflatePakCommand);

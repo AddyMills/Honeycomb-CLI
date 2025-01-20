@@ -86,7 +86,7 @@ namespace PAK_Compiler
             }
         }
 
-        public static void RunCompiler(string compilePath, string? gameVersion, string? console = "PC", bool split = false, string? assetContext = null)
+        public static void RunCompiler(string compilePath, string? gameVersion, string? console = "PC", bool split = false, string? assetContext = null, string? outFolder = null)
         {
             if (gameVersion == null)
             {
@@ -142,11 +142,37 @@ namespace PAK_Compiler
                     break;
             }
 
-            string fullPakName = pakName + ".pak" + extension;
-            string fullPabName = pakName + ".pab" + extension;
+            string fullPakName;
+            string fullPabName;
 
-            string pakPath = Path.Join(rootPath, fullPakName);
-            string pabPath = Path.Join(rootPath, fullPabName);
+            fullPakName = pakName + ".pak" + extension;
+            fullPabName = pakName + ".pab" + extension;
+
+
+            string pakPath;
+            string pabPath;
+            string newRootPath;
+
+            if (string.IsNullOrEmpty(outFolder))
+            {
+                newRootPath = rootPath;
+            }
+            else
+            {
+                try
+                {
+                    Directory.CreateDirectory(outFolder);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error creating output directory: " + e.Message);
+                    return;
+                }
+                newRootPath = outFolder;
+            }
+            Console.WriteLine("Output directory: " + newRootPath);
+            pakPath = Path.Join(newRootPath, fullPakName);
+            pabPath = Path.Join(newRootPath, fullPabName);
 
             if (console == "PS3")
             {
