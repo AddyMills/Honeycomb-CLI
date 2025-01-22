@@ -159,16 +159,16 @@ namespace PAK_Compiler
             }
             else
             {
+                newRootPath = Path.GetFullPath(outFolder);
                 try
                 {
-                    Directory.CreateDirectory(outFolder);
+                    Directory.CreateDirectory(newRootPath);
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Error creating output directory: " + e.Message);
                     return;
                 }
-                newRootPath = outFolder;
             }
             Console.WriteLine("Output directory: " + newRootPath);
             pakPath = Path.Join(newRootPath, fullPakName);
