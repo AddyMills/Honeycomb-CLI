@@ -98,8 +98,10 @@ Command WadOption()
 
     var compileWadCommand = new Command("compile", "Compile a WAD file from a folder.");
     var folderPathArgument = new Argument<string>("folderPath", "The path to the folder to compile.");
+    var recompilePakOption = new Option<bool>(["--recompile", "-r"], "Recompile the QB.PAK file in the extracted WAD folder before compiling the WAD.");
     compileWadCommand.AddArgument(folderPathArgument);
-    compileWadCommand.SetHandler(WadFuncs.RunWadCompiler, folderPathArgument);
+    compileWadCommand.AddOption(recompilePakOption);
+    compileWadCommand.SetHandler(WadFuncs.RunWadCompiler, folderPathArgument, recompilePakOption);
 
     wadCommand.AddCommand(extractWadCommand);
     wadCommand.AddCommand(compileWadCommand);

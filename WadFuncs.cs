@@ -44,9 +44,9 @@ namespace PAK_Compiler
             ExtractWADFile(HedFiles, File.ReadAllBytes(wadPath), extractPath);
         }
 
-        public static void RunWadCompiler(string mainPath)
+        public static void RunWadCompiler(string mainPath, bool recompilePak)
         {
-            CompileWADFile(mainPath);
+            CompileWADFile(mainPath, true, recompilePak);
         }
     }
 }
