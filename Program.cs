@@ -117,7 +117,7 @@ var wadCommand = WadOption();
 var rootCommand = new RootCommand
 {
     pakCommand,
-    // makeSongCommand,
+    makeSongCommand,
     wadCommand
 };
 

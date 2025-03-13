@@ -22,6 +22,27 @@ namespace PAK_Compiler
         private GhMetadata ghMetadata = new GhMetadata();
         public MakeSong(string folder, string game, string platform)
         {
+            game = game.ToUpper();
+            switch (game)
+            {
+                case GAME_GH3:
+                case GAME_GHA:
+                case GAME_GHWT:
+                case "GHM":
+                case "GHSH":
+                case "GHGH":
+                case "GHVH":
+                case GAME_GH5:
+                    break;
+                case "WOR":
+                case "GHWOR":
+                    game = GAME_GHWOR;
+                    break;
+                default:
+                    Console.WriteLine("Invalid game option.");
+                    ShowHelpMenu();
+                    return;
+            }
             Game = game;
             Platform = platform;
             Folder = folder;
@@ -52,15 +73,18 @@ namespace PAK_Compiler
                 Console.WriteLine("MIDI file not found in the folder.");
                 return;
             }
+            var skaPath = fileInfo.DoesSkaExist ? fileInfo.SkaFiles : string.Empty;
+            var perfPath = fileInfo.DoesPerfExist ? fileInfo.PerfOverride : string.Empty;
+            var scriptPath = fileInfo.DoesSongScriptsExist ? fileInfo.SongScripts : string.Empty;
             var (pakFile, doubleKick) = PAK.CreateSongPackage(
                 midiPath: fileInfo.MidiFile,
                 savePath: Folder,
                 songName: metadata.Checksum,
                 game: Game,
                 gameConsole: Platform,
-                skaPath: fileInfo.SkaFiles,
-                perfOverride: fileInfo.PerfOverride,
-                songScripts: fileInfo.SongScripts,
+                skaPath: skaPath,
+                perfOverride: perfPath,
+                songScripts: scriptPath,
                 skaSource: songInfo.SkaSource,
                 venueSource: songInfo.VenueSource,
                 hopoThreshold: metadata.HmxHopoThreshold
