@@ -76,7 +76,7 @@ namespace PAK_Compiler
             var skaPath = fileInfo.DoesSkaExist ? fileInfo.SkaFiles : string.Empty;
             var perfPath = fileInfo.DoesPerfExist ? fileInfo.PerfOverride : string.Empty;
             var scriptPath = fileInfo.DoesSongScriptsExist ? fileInfo.SongScripts : string.Empty;
-            var (pakFile, doubleKick) = PAK.CreateSongPackage(
+            var (pakFile, doubleKick, pakExpertPlus) = PAK.CreateSongPackage(
                 midiPath: fileInfo.MidiFile,
                 savePath: Folder,
                 songName: metadata.Checksum,
