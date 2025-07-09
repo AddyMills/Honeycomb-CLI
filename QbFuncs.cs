@@ -42,7 +42,7 @@ namespace PAK_Compiler
                 }
                 if (fileExt == ".q")
                 {
-                    var qBItems = ParseQFile(entry);
+                    var (qBItems, _) = ParseQFile(entry);
                     var fileData = CompileQbFile(qBItems, qbName, game: game, console: platform!);
                     var output = Path.ChangeExtension(entry, ".qb");
                     File.WriteAllBytes(output, fileData);
