@@ -1,9 +1,13 @@
-﻿using System;
+﻿using GH_Toolkit_Core.Debug;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GH_Toolkit_Core.Debug.DebugReader;
 using static GH_Toolkit_Core.PAK.PAK;
+using static GH_Toolkit_Core.Methods.ReadWrite;
+using static GH_Toolkit_Core.Methods.GlobalHelpers;
 
 namespace PAK_Compiler
 {
@@ -121,33 +125,19 @@ namespace PAK_Compiler
             string pakName = Path.GetRelativePath(rootPath, folderPath);
             isQb = pakName.Equals("qb", StringComparison.OrdinalIgnoreCase);
             split = (isQb && console != "WII") ? true : split;
+            bool isWiiQb = isQb && console == "WII";
             // Compile PAK and PAB files
             PakCompiler pakCompiler = new PakCompiler(gameVersion, console, assetContext, isQb, split);
-            var (pak, pab) = pakCompiler.CompilePAK(folderPath, console);
-            string extension = "";
+            var (pak, pab, qsStrings) = pakCompiler.CompilePAK(folderPath, console);
 
-            switch (console)
-            {
-                case "PS2":
-                    extension = ".ps2";
-                    break;
-                case "PS3":
-                    extension = ".PS3";
-                    break;
-                case "WII":
-                    extension = ".ngc";
-                    break;
-                default:
-                    extension = ".xen";
-                    break;
-            }
+            string extension = GetConsoleExtension(console);
 
             string fullPakName;
             string fullPabName;
+            
 
             fullPakName = pakName + ".pak" + extension;
             fullPabName = pakName + ".pab" + extension;
-
 
             string pakPath;
             string pabPath;
@@ -187,6 +177,10 @@ namespace PAK_Compiler
 
             if (pab != null)
             {
+                if (qsStrings != null)
+                {
+                    MakeQsFilesForSplitPak(folderPath, newRootPath, console, gameVersion, qsStrings, edat);
+                }
                 using (FileStream pakFile = new FileStream(pakPath, FileMode.Create, FileAccess.Write))
                 using (FileStream pabFile = new FileStream(pabPath, FileMode.Create, FileAccess.Write))
                 {
