@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "makesong \"D:\\RB\\Songs\\Cazzu\\Compile\\DOLCE_BY_CAZZU_1_chps\" -g gh3 -c 360"
+      "commandLineArgs": "pak compile -g gh3 -c 360 \"D:\\Visual Studio\\Repos\\Pak-Extractor\\to_extract\\z_dive\""
     }
   }
 }
