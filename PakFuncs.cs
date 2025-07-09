@@ -177,7 +177,7 @@ namespace PAK_Compiler
 
             if (pab != null)
             {
-                if (qsStrings != null)
+                if (qsStrings != null && gameVersion != "GH3" && gameVersion != "GHA")
                 {
                     MakeQsFilesForSplitPak(folderPath, newRootPath, console, gameVersion, qsStrings, edat);
                 }

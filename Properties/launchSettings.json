@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "pak compile -g gh3 -c 360 \"D:\\Visual Studio\\Repos\\Pak-Extractor\\to_extract\\z_dive\""
+      "commandLineArgs": "pak compile -g gh3 -c pc -s \"D:\\Visual Studio\\Repos\\Pak-Extractor\\to_extract\\global\""
     }
   }
 }
