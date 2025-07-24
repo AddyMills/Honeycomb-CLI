@@ -18,25 +18,31 @@ namespace PAK_Compiler
         private string? Game;
         private string? Platform;
         private string? Folder;
+        private bool Gh3Plus;
         private SongData SongData = new SongData();
         private GhMetadata ghMetadata = new GhMetadata();
         public MakeSong(string folder, string game, string platform)
         {
+
             game = game.ToUpper();
             switch (game)
             {
                 case GAME_GH3:
                 case GAME_GHA:
                 case GAME_GHWT:
-                case "GHM":
-                case "GHSH":
-                case "GHGH":
-                case "GHVH":
+                case GAME_GHM:
+                case GAME_GHSH:
+                case GAME_GHGH:
+                case GAME_GHVH:
                 case GAME_GH5:
                     break;
-                case "WOR":
-                case "GHWOR":
+                case STRING_WOR:
+                case GAME_GHWOR_UPPER:
                     game = GAME_GHWOR;
+                    break;
+                case GAME_GH3PLUS:
+                    game = GAME_GH3;
+                    Gh3Plus = platform == CONSOLE_PC;
                     break;
                 default:
                     Console.WriteLine("Invalid game option.");
@@ -46,6 +52,7 @@ namespace PAK_Compiler
             Game = game;
             Platform = platform;
             Folder = folder;
+            
             if (Game == null || Platform == null || Folder == null)
             {
                 Console.WriteLine("Missing required arguments: ");
