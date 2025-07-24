@@ -66,8 +66,12 @@ namespace PAK_Compiler
         private void ProcessSong() 
         {
             GetDataFromFolder();
+            CreateSongPackage();
+        }
+        private void CreateSongPackage()
+        {
             var songInfo = SongData.GetSongInfo();
-            string[] dlcName = { Game!, songInfo.Artist, songInfo.Title , songInfo.Year.ToString(), songInfo.Charter, songInfo.IsCover.ToString() };
+            string[] dlcName = { Game!, songInfo.Artist, songInfo.Title, songInfo.Year.ToString(), songInfo.Charter, songInfo.IsCover.ToString() };
             var dlcNum = MakeConsoleChecksum(dlcName);
             if (Platform! != CONSOLE_PC)
             {
@@ -77,8 +81,12 @@ namespace PAK_Compiler
             var fileInfo = SongData.GetFilePathInfo();
             if (!(fileInfo.DoesMidiExist))
             {
-                Console.WriteLine("MIDI file not found in the folder.");
-                return;
+                if (!fileInfo.DoesChartExist)
+                {
+                    Console.WriteLine("No MIDI or Chart note file found in folder.");
+                    return;
+                }
+                fileInfo.SetMidiFile(fileInfo.GetChartFile());
             }
             var skaPath = fileInfo.DoesSkaExist ? fileInfo.SkaFiles : string.Empty;
             var perfPath = fileInfo.DoesPerfExist ? fileInfo.PerfOverride : string.Empty;
@@ -94,11 +102,11 @@ namespace PAK_Compiler
                 songScripts: scriptPath,
                 skaSource: songInfo.SkaSource,
                 venueSource: songInfo.VenueSource,
-                hopoThreshold: metadata.HmxHopoThreshold
-                
+                hopoThreshold: metadata.HmxHopoThreshold,
+                gh3Plus: Gh3Plus
+
                 );
         }
-
         private void GetDataFromFolder()
         {
             SongData.SetFilePathInfo(iniParser.AssignFiles(Folder, Game));
@@ -137,7 +145,7 @@ namespace PAK_Compiler
             Console.WriteLine("  -g <game> - The game the song is for.");
             Console.WriteLine("  -c <console> - The console to compile for.");
             Console.WriteLine("Available games options:");
-            Console.WriteLine("GH3, GHA, GHWT, GHM, GHSH, GHGH, GHVH, GH5, WOR, GHWOR");
+            Console.WriteLine("GH3, GH3+, GHA, GHWT, GHM, GHSH, GHGH, GHVH, GH5, WOR, GHWOR");
             Console.WriteLine("Available console options:");
             Console.WriteLine("360, PC, PS2, PS3, WII");
         }
