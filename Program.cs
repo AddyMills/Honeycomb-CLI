@@ -61,9 +61,10 @@ Command gameOptionCommand()
     var platformOption = new Option<string>(new string[] { "--console", "-c" }, "The console the song is for.");
     makeSongCommand.AddOption(platformOption);
 
-    makeSongCommand.SetHandler((folder, game, console) =>
+    makeSongCommand.SetHandler(async (folder, game, console) =>
     {
         MakeSong makeSong = new MakeSong(folder, game, console);
+        await makeSong.ProcessSong();
     }, folderArgument, gameOption, platformOption);
     return makeSongCommand;
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "makesong \"D:\\Guitar Hero\\Customs Testing\\Falling in Reverse - Ronald (feat. Tech N9ne, Alex Terrible) (FigNeutered)\" -g GH3 -c PC"
+      "commandLineArgs": "pak extract \"D:\\Visual Studio\\Repos\\Pak-Extractor\\to_extract\\qb_wt.pak.xen\""
     }
   }
 }
