@@ -160,20 +160,27 @@ namespace PAK_Compiler
                 await audio.GHWTAudioCompile(encrypt);
             }
 
-            var (pakFile, doubleKick, pakExpertPlus) = PAK.CreateSongPackage(
-                    midiPath: fileInfo.MidiFile,
-                    savePath: Folder,
-                    songName: metadata.Checksum,
-                    game: Game,
-                    gameConsole: Platform,
-                    skaPath: skaPath,
-                    perfOverride: perfPath,
-                    songScripts: scriptPath,
-                    skaSource: songInfo.SkaSource,
-                    venueSource: songInfo.VenueSource,
-                    hopoThreshold: metadata.HmxHopoThreshold,
-                    gh3Plus: Gh3Plus
-                    );
+            var compiler = new SongPakCompiler(
+                midiPath: fileInfo.MidiFile,
+                savePath: Folder,
+                songName: metadata.Checksum,
+                game: Game,
+                gameConsole: Platform
+            )
+            {
+                SkaPath = skaPath,
+                PerfOverride = perfPath,
+                SongScripts = scriptPath,
+                SkaSource = songInfo.SkaSource,
+                VenueSource = songInfo.VenueSource,
+                HopoThreshold = metadata.HmxHopoThreshold,
+                Gh3Plus = Gh3Plus
+            };
+
+            compiler.Build();
+
+            var (pakFile, doubleKick, pakExpertPlus) = compiler.GetResults();
+
         }
         private void GetDataFromFolder()
         {
