@@ -40,8 +40,10 @@ Command makePakCommand()
     compilePakCommand.AddOption(splitOption);
     var outputOption = new Option<string>(["--output", "-o"], "The output folder path for the compiled PAK file.");
     compilePakCommand.AddOption(outputOption);
+    var noQsOption = new Option<bool>(["--noqs", "-nq"], "Do not compile QS files when compiling the PAK.");
+    compilePakCommand.AddOption(noQsOption);
 
-    compilePakCommand.SetHandler(PakFuncs.RunCompiler, folderPathArgument, gamePakOption, consoleOption, splitOption, assetOption, outputOption);
+    compilePakCommand.SetHandler(PakFuncs.RunCompiler, folderPathArgument, gamePakOption, consoleOption, splitOption, assetOption, outputOption, noQsOption);
 
     pakCommand.AddCommand(extractPakCommand);
     pakCommand.AddCommand(deflatePakCommand);

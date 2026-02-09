@@ -90,7 +90,7 @@ namespace PAK_Compiler
             }
         }
 
-        public static void RunCompiler(string compilePath, string? gameVersion, string? console = "PC", bool split = false, string? assetContext = null, string? outFolder = null)
+        public static void RunCompiler(string compilePath, string? gameVersion, string? console = "PC", bool split = false, string? assetContext = null, string? outFolder = null, bool noQs = false)
         {
             if (gameVersion == null)
             {
@@ -128,7 +128,7 @@ namespace PAK_Compiler
             bool isWiiQb = isQb && console == "WII";
             // Compile PAK and PAB files
             PakCompiler pakCompiler = new PakCompiler(gameVersion, console, assetContext, isQb, split);
-            var (pak, pab, qsStrings) = pakCompiler.CompilePAK(folderPath, console);
+            var (pak, pab, qsStrings) = pakCompiler.CompilePAK(folderPath, console, noQs);
 
             string extension = GetConsoleExtension(console);
 
