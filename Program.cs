@@ -112,16 +112,27 @@ Command WadOption()
     return wadCommand;
 }
 
+Command PaktoMidiOption()
+{
+    var paktoMidiCommand = new Command("paktomidi", "Convert a PAK file to a MIDI file.");
+    var pakPathArgument = new Argument<string>("pakPath", "The path to the PAK file.");
+    paktoMidiCommand.AddArgument(pakPathArgument);
+    paktoMidiCommand.SetHandler(MidiFuncs.ConvertPakToMidi, pakPathArgument);
+    return paktoMidiCommand;
+}
+
 var pakCommand = makePakCommand();
 var makeSongCommand = gameOptionCommand();
 var wadCommand = WadOption();
+var paktoMidiCommand = PaktoMidiOption();
 //var qbCommand = qbOptionCommand();
 
 var rootCommand = new RootCommand
 {
     pakCommand,
     makeSongCommand,
-    wadCommand
+    wadCommand,
+    paktoMidiCommand
 };
 
 rootCommand.Invoke(args);

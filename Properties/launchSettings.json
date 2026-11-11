@@ -2,7 +2,7 @@
   "profiles": {
     "PAK Compiler": {
       "commandName": "Project",
-      "commandLineArgs": "pak extract \"D:\\Visual Studio\\Repos\\Pak-Extractor\\to_extract\\qb_wt.pak.xen\""
+      "commandLineArgs": "paktomidi \"D:\\RB\\GH3\\ISOExtract\\DATA\\COMPRESSED\\SONGS\\fcpremix_song.pak.xen\""
     }
   }
 }
